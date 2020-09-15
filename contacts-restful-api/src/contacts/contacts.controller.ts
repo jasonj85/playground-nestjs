@@ -1,4 +1,4 @@
-import { Body, Controller, Get, NotFoundException, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Put } from '@nestjs/common';
 
 @Controller('contacts')
 export class ContactsController {
@@ -70,4 +70,29 @@ export class ContactsController {
         return updatedContact;
     }
 
+    @Patch('/:id')
+    partialUpdateContact(@Param('id') id, @Body() updatedContact){
+        let index = this.contacts.findIndex(c => c.id == id);
+        
+        if(index === -1) {
+            throw new NotFoundException();
+        }
+
+        this.contacts[index] = {...this.contacts[index], ...updatedContact}
+
+        return {...this.contacts[index]};
+    }
+
+    @Delete('/:id')
+    deleteContact(@Param('id') id) {
+        let index = this.contacts.findIndex(c => c.id == id);
+        
+        if(index === -1) {
+            throw new NotFoundException();
+        }
+
+        let deleted = this.contacts.splice(index, 1);
+        
+        return deleted[0];
+    }
 }
