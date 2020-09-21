@@ -5,18 +5,23 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Attach to Chrome",
-            "port": 9222,
+            "name": "Attach by Process ID",
             "request": "attach",
-            "type": "pwa-chrome",
-            "webRoot": "${workspaceFolder}"
+            "type": "node",
+            "processId": "${command:PickProcess}"
         },
+        
         {
-            "type": "pwa-chrome",
+            "type": "node",
             "request": "launch",
-            "name": "Launch Chrome against localhost",
-            "url": "http://localhost:8080",
-            "webRoot": "${workspaceFolder}"
+            "name": "Launch Program",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}\\quotes-server\\src\\quotes\\quotes.controller.ts",
+            "outFiles": [
+                "${workspaceFolder}/**/*.js"
+            ]
         }
     ]
 }

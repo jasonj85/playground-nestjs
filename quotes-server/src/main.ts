@@ -1,9 +1,12 @@
 import { NestFactory } from '@nestjs/core';
+import 'dotenv/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.enableCors();
 
   // set swagger options
   const options = new DocumentBuilder()

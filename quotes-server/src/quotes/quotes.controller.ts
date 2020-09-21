@@ -22,7 +22,7 @@ export class QuotesController {
     }
 
     @Post()
-    createQuote(@Body() quote: CreateQuoteDto): Quote {
+    createQuote(@Body() quote: CreateQuoteDto): Promise<Quote> {
         return this.quotesService.createQuote(quote);
     }
 
