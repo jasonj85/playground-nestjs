@@ -1,6 +1,12 @@
 import * as mongoose from 'mongoose';
 
 export const QuoteSchema = new mongoose.Schema({
-    title: String,
-    author: String
+    title: {
+        type: String,
+        required: [true, 'Please enter a title']
+    },
+    author: {
+        type: String,
+        required: [true, 'Please enter an author']
+    }
 });

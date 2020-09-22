@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Quote } from './interfaces/quote.interface';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -6,52 +6,38 @@ import { InjectModel } from '@nestjs/mongoose';
 @Injectable()
 export class QuotesService {
 
-    constructor(@InjectModel('Quote') private readonly quoteModel: Model<Quote>){}
+    constructor(@InjectModel('Quote') private readonly quoteModel: Model<Quote>) { }
 
-    quotes: Quote[] = [
-        { id: "1", title: "title1", author: "author1" },
-        { id: "2", title: "title2", author: "author2" },
-        { id: "3", title: "title3", author: "author3" }
-    ]
-
-    //get operations
-    getQuotes(): Quote[] {
-        return this.quoteModel.find().exec();
+     //get operations
+    async getQuotes(): Promise<Quote[]> {
+        return await this.quoteModel.find().exec();
     }
-    
-    getQuote(id: string): Quote {
-        return this.quotes.find(q => q.id === id);
+
+    async getQuote(id: string): Promise<Quote> {
+        try {
+            return await this.quoteModel.findById(id).exec();
+        } catch (error) {
+            throw new HttpException('Quote not found', HttpStatus.NOT_FOUND);
+        }
     }
 
     //create operations
-    createQuote(quote: Quote): Promise<Quote> {
-        const newQuote = new this.quoteModel(quote);
+    async createQuote(quote: Quote): Promise<Quote> {
+        const newQuote = await new this.quoteModel(quote);
         return newQuote.save();
     }
 
     //update operations
-    updateFullQuote(id: string, updatedQuote: Quote) {
-        let index = this.quotes.findIndex(q => q.id === id);
-        
-        if(index > -1) {
-            this.quotes[index] = updatedQuote;
-        }
-
-        return updatedQuote;
+    async updateFullQuote(id: string, updatedQuote: Quote): Promise<Quote> {
+        return await this.quoteModel.findByIdAndUpdate(id, updatedQuote, { new: true });
     }
 
-    updatePartialQuote(id: string, updatedQuote: Quote) {
-        let index = this.quotes.findIndex(q => q.id === id);
-        
-        if(index > -1) {
-            this.quotes[index] = {...this.quotes[index], ...updatedQuote};
-        }
-
-        return updatedQuote;
+    async updatePartialQuote(id: string, props: Quote): Promise<Quote> {
+        return await this.quoteModel.findByIdAndUpdate(id, { $set: props }, { upsert: true, new: true});
     }
 
     //delete operations
-    deleteQuote(id: string) {
-        return this.quotes.find(q => q.id === id);
+    async deleteQuote(id: string): Promise<any> {
+        return await this.quoteModel.findByIdAndRemove(id);
     }
 }
