@@ -14,6 +14,11 @@ export class QuotesController {
         return this.quotesService.getQuotes();
     }
 
+    @Get('latest')
+    getLatest(): Promise<Quote> {
+        return this.quotesService.getLatestQuote();
+    }
+
     @ApiParam({ name: 'id' })
     @Get(':id')
     getQuote(@Param('id') id: string): Promise<Quote> {

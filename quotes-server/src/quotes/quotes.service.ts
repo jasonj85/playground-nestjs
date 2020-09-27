@@ -13,6 +13,10 @@ export class QuotesService {
         return await this.quoteModel.find().exec();
     }
 
+    async getLatestQuote(): Promise<Quote> {
+        return await this.quoteModel.findOne().sort({ field: 'asc', _id: -1 }).exec();
+    }
+
     async getQuote(id: string): Promise<Quote> {
         try {
             return await this.quoteModel.findById(id).exec();
